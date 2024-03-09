@@ -36,10 +36,32 @@ variable (x y z : α)
 #check (sup_le : x ≤ z → y ≤ z → x ⊔ y ≤ z)
 
 example : x ⊓ y = y ⊓ x := by
-  sorry
+  apply le_antisymm
+  repeat
+    apply le_inf
+    apply inf_le_right
+    apply inf_le_left
 
 example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
-  sorry
+  apply le_antisymm
+  · apply le_inf
+    · apply le_trans
+      · exact inf_le_left
+      · exact inf_le_left
+    · apply le_inf
+      · apply le_trans
+        · exact inf_le_left
+        · exact inf_le_right
+      · apply inf_le_right
+  · apply le_inf
+    · apply le_inf
+      · exact inf_le_left
+      · apply le_trans
+        · exact inf_le_right
+        · exact inf_le_left
+    · apply le_trans
+      · exact inf_le_right
+      · exact inf_le_right
 
 example : x ⊔ y = y ⊔ x := by
   sorry
@@ -106,7 +128,11 @@ variable (x y z : X)
 #check (dist_triangle x y z : dist x z ≤ dist x y + dist y z)
 
 example (x y : X) : 0 ≤ dist x y := by
-  sorry
+  have := calc
+    0 = dist x x := by rw[dist_self]
+    _ ≤ dist x y + dist y x := dist_triangle x y x
+    _ = dist x y + dist x y := by rw[dist_comm]
+    _ = 2 * dist x y := by ring
+  linarith
 
 end
-
